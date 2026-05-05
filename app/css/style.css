@@ -1,0 +1,267 @@
+/* Reset Básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+}
+
+.brutalist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    border-bottom: 4px solid #fff;
+    background-color: #111;
+}
+
+.brutalist-header h1 {
+    font-family: Impact, sans-serif;
+    font-size: 3rem;
+    letter-spacing: 2px;
+    color: #9b0125;
+    text-shadow: 2px 2px 0px #fff;
+}
+
+.brutalist-btn {
+    background-color: #9b0125;
+    color: #fff;
+    border: 3px solid #fff;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #fff;
+    transition: all 0.1s ease-in-out;
+}
+
+.brutalist-btn:hover {
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0px 0px 0px #fff;
+    transform: translate(4px, 4px);
+}
+
+/* Grid para los Álbumes */
+.albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.loading-text {
+    font-size: 1.5rem;
+    color: #ff003c;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Tarjetas */
+.brutalist-card {
+    border: 4px solid #fff;
+    background-color: #111;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.1s ease-in-out;
+}
+
+.brutalist-card:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 5px 5px 0px #ff003c;
+}
+
+.card-cover {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 4px solid #fff;
+    filter: grayscale(100%) contrast(120%);
+    transition: filter 0.3s;
+}
+
+.brutalist-card:hover .card-cover {
+    filter: grayscale(0%) contrast(100%);
+}
+
+.card-no-cover {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    color: #444;
+    font-size: 1.5rem;
+    border-bottom: 4px solid #fff;
+}
+
+.card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-family: Impact, sans-serif;
+    font-size: 2rem;
+    color: #ff003c;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+}
+
+.card-band {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.card-year {
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #aaa;
+}
+
+/* Botones de acción pequeños */
+.card-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+    /* Empuja los botones al fondo */
+}
+
+.btn-action {
+    flex: 1;
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-action.edit:hover {
+    background: #fff;
+    color: #000;
+}
+
+.btn-action.delete:hover {
+    background: #ff003c;
+    border-color: #ff003c;
+}
+
+/* ESTILOS DEL MODAL Y FORMULARIO */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 500px;
+    background-color: #111;
+    padding: 2rem;
+}
+
+.modal-title {
+    color: #ff003c;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 0.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #aaa;
+}
+
+.form-group input,
+.form-group select {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #555;
+    padding: 0.8rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #ff003c;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.modal-actions button {
+    flex: 1;
+}
+
+/* PANTALLA DE LOGIN */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    /* Fondo totalmente negro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    /* Por encima de todo */
+    transition: opacity 0.5s ease;
+}
+
+.login-card {
+    width: 90%;
+    max-width: 400px;
+    padding: 3rem 2rem;
+}
+
+.error-msg {
+    color: #ff003c;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 1rem;
+    animation: blink 1s infinite;
+}
