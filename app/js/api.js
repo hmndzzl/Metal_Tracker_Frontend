@@ -1,4 +1,16 @@
-const API_URL = 'http://https://34.171.199.135:3000/api';
+// 1. Leemos la URL actual del navegador
+const currentHost = window.location.hostname;
+
+// 2. Preguntamos si estamos en nuestra computadora
+const isLocal = currentHost === 'localhost' || currentHost === '127.0.0.1';
+
+// 3. Definimos el dominio del backend dinámicamente
+export const BACKEND_URL = isLocal
+    ? 'http://localhost:3000'
+    : 'http://34.171.199.135';
+
+// 4. Construimos la ruta de la API
+export const API_URL = `${BACKEND_URL}/api`;
 
 // VIGILANTE DE SESIONES (NUEVO)
 function interceptAuthErrors(response) {

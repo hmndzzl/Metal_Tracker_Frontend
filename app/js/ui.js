@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://https://34.171.199.135:3000';
+import { BACKEND_URL } from './api.js';
 
 export function renderAlbums(albums) {
     const grid = document.getElementById('albums-grid');
