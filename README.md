@@ -41,6 +41,13 @@ Este proyecto está completamente dockerizado utilizando Nginx para facilitar su
 
 **Nota Importante:** Es indispensable que el Backend de Metal Tracker esté en ejecución en el puerto `3000` para que el frontend pueda consumir la API y gestionar la autenticación.
 
+## 🔑 Usuarios de Prueba
+
+Para probar el sistema con los diferentes niveles de acceso (RBAC), puedes utilizar las siguientes credenciales (la contraseña para ambos es `admin123`):
+
+*   **Administrador:** `admin` (Permite agregar álbumes, bandas, canciones, editar y eliminar).
+*   **Usuario Estándar:** `hugo_metalhead` (Solo permite ver detalles y dejar reseñas).
+
 ## 🏗️ Arquitectura y Patrones de Diseño
 
 El proyecto implementa prácticas modernas de desarrollo frontend sin depender de librerías externas como React o Angular:
