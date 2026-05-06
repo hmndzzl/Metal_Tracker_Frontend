@@ -309,9 +309,11 @@ body {
     color: #fff;
     border: 2px solid #555;
     padding: 1rem;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: Impact, sans-serif;
+    letter-spacing: 1px;
     font-size: 1.2rem;
-    font-weight: bold;
+    font-weight: normal;
+    /* Se quita el bold extra porque Impact ya es pesada */
     text-transform: uppercase;
 }
 
