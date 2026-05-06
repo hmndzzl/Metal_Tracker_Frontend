@@ -387,3 +387,51 @@ body {
 .clickable-cover {
     cursor: pointer;
 }
+
+/* FORMULARIO PARA CANCIONES */
+.mini-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed #555;
+}
+
+.mini-form input {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.mini-form input:focus {
+    outline: none;
+    border-color: #ff003c;
+}
+
+.mini-form-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mini-form-row input {
+    flex: 1;
+    width: 100%;
+    /* Evita que se desborden */
+}
+
+.brutalist-btn-small {
+    background-color: #ff003c;
+    color: #fff;
+    border: 1px solid #fff;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 1rem;
+}
+
+.brutalist-btn-small:hover {
+    background-color: #fff;
+    color: #000;
+}

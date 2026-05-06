@@ -1,6 +1,6 @@
 import {
     fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover,
-    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings
+    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings, addSong
 } from './api.js';
 import { renderAlbums } from './ui.js';
 
@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Variable para rastrear si se está editando un álbum existente
     let currentEditId = null;
+    let currentViewAlbumId = null;
 
     // DELEGACIÓN DE EVENTOS (EDITAR Y ELIMINAR)
     const grid = document.getElementById('albums-grid');
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.classList.contains('clickable-cover')) {
             const id = e.target.dataset.id;
             const detailsModal = document.getElementById('details-modal');
+            currentViewAlbumId = id;
 
             // Pone el modal visible pero en modo "Cargando"
             document.getElementById('detail-title').textContent = 'INVOCANDO DATOS...';
@@ -229,6 +231,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             bands.forEach(b => {
                 selectBand.innerHTML += `<option value="${b.id}">${b.name}</option>`;
             });
+        }
+    });
+
+    // AGREGAR CANCIÓN AL ÁLBUM ACTUAL
+    const addSongForm = document.getElementById('add-song-form');
+
+    addSongForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentViewAlbumId) return;
+
+        const title = document.getElementById('song-title').value;
+        const track_number = parseInt(document.getElementById('song-track').value);
+        const duration_seconds = parseInt(document.getElementById('song-duration').value);
+
+        const newSong = await addSong({
+            album_id: parseInt(currentViewAlbumId),
+            title,
+            track_number,
+            duration_seconds
+        });
+
+        if (newSong) {
+            // Limpiamos el formulario
+            addSongForm.reset();
+
+            // Convertimos segundos a formato mm:ss para inyectarlo visualmente
+            const min = Math.floor(duration_seconds / 60);
+            const sec = (duration_seconds % 60).toString().padStart(2, '0');
+
+            // Inyectamos la nueva canción al final de la lista sin recargar todo
+            const tracklistEl = document.getElementById('detail-tracklist');
+
+            // Si decía "NO HAY CANCIONES", lo limpiamos primero
+            if (tracklistEl.innerHTML.includes('NO HAY CANCIONES')) {
+                tracklistEl.innerHTML = '';
+            }
+
+            tracklistEl.innerHTML += `<li>${track_number}. ${title} [${min}:${sec}]</li>`;
+        } else {
+            alert('Error satánico al guardar la pista.');
         }
     });
 

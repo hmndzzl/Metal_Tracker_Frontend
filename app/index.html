@@ -111,6 +111,15 @@
             <div class="details-body">
                 <div class="tracklist-section">
                     <h3>TRACKLIST</h3>
+                    <form id="add-song-form" class="mini-form hidden-if-not-auth">
+                        <input type="text" id="song-title" placeholder="TÍTULO DE LA CANCIÓN" required>
+                        <div class="mini-form-row">
+                            <input type="number" id="song-track" placeholder="PISTA (Ej. 1)" required min="1">
+                            <input type="number" id="song-duration" placeholder="SEG. (Ej. 210)" required min="1">
+                            <button type="submit" class="brutalist-btn-small">AGREGAR</button>
+                        </div>
+                    </form>
+
                     <ul id="detail-tracklist" class="brutalist-list">
                         <!-- Se llenará con JS -->
                     </ul>

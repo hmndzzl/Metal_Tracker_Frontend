@@ -148,3 +148,24 @@ export async function fetchAlbumRatings(id) {
         return [];
     }
 }
+
+// OBTENER CANCIONES 
+export async function addSong(songData) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/songs`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(songData)
+        });
+
+        if (!response.ok) throw new Error('Error al agregar canción');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
