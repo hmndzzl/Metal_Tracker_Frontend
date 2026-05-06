@@ -2,6 +2,10 @@
 
 ## Creado por Hugo Méndez - 241265
 
+> **Repositorio del backend:** [https://github.com/hmndzzl/Metal_Tracker_Backend](https://github.com/hmndzzl/Metal_Tracker_Backend)
+>
+> **App publicada:** http://34.171.199.135:8080/
+
 ---
 
 Interfaz gráfica oficial para el sistema de gestión de catálogo musical "Metal Tracker". Este cliente web ha sido desarrollado siguiendo una arquitectura estricta de **Cero Frameworks** (Zero-Dependency), utilizando exclusivamente HTML5, CSS3 y JavaScript puro (Vanilla JS).
