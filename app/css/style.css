@@ -383,6 +383,17 @@ body {
     margin-right: 0.5rem;
 }
 
+/* GRUPO DE BANDA (SELECT + BOTÓN) */
+.band-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.band-input-group select {
+    flex: 1;
+    /* Ocupa todo el espacio posible */
+}
+
 /* Indicador de click en portadas */
 .clickable-cover {
     cursor: pointer;

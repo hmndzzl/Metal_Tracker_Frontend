@@ -169,3 +169,24 @@ export async function addSong(songData) {
         return null;
     }
 }
+
+// CREAR NUEVA BANDA
+export async function createBand(bandData) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/bands`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Pase VIP
+            },
+            body: JSON.stringify(bandData)
+        });
+
+        if (!response.ok) throw new Error('Error al forjar la banda');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

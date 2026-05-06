@@ -1,6 +1,6 @@
 import {
     fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover,
-    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings, addSong
+    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings, addSong, createBand
 } from './api.js';
 import { renderAlbums } from './ui.js';
 
@@ -28,16 +28,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         const authData = await loginUser(userVal, passVal);
 
         if (authData && authData.token) {
-            // ¡Exito! Guardamos el token en la bóveda del navegador
+            // Guarda el token en la bóveda del navegador
             localStorage.setItem('token', authData.token);
-            // Ocultamos la pantalla de login suavemente
+            // Guarda el rol que devuelve el backend
+            localStorage.setItem('role', authData.user.role);
+            // Oculta la pantalla de login suavemente
             loginOverlay.style.opacity = '0';
             setTimeout(() => {
                 loginOverlay.style.display = 'none';
-                iniciarApp(); // Arrancamos la carga de datos
+                iniciarApp();
             }, 500);
         } else {
-            // ¡Fallo! Mostramos el error
+            // Muestra el error
             loginError.classList.remove('hidden');
         }
     });
@@ -177,6 +179,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             const albums = await fetchAlbums();
             renderAlbums(albums);
 
+            // Esconder el botón principal si no es admin
+            const userRole = localStorage.getItem('role');
+            if (userRole !== 'admin') {
+                document.getElementById('btn-add-album').style.display = 'none';
+
+                // Ocultar el formulario de agregar canciones dentro del modal
+                const addSongForm = document.getElementById('add-song-form');
+                if (addSongForm) {
+                    addSongForm.style.display = 'none';
+                }
+            }
+
             // Configura los controles de búsqueda
             const searchInput = document.getElementById('search-input');
             const sortSelect = document.getElementById('sort-select');
@@ -234,6 +248,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // CREAR NUEVA BANDA DESDE EL MODAL
+    const btnNewBand = document.getElementById('btn-new-band');
+
+    btnNewBand.addEventListener('click', async () => {
+        // Vanilla JS puro: Usamos un prompt clásico para no crear otro modal gigante
+        const newBandName = prompt('INGRESA EL NOMBRE DE LA NUEVA BANDA (o "Cancelar" para abortar):');
+
+        if (newBandName && newBandName.trim() !== '') {
+            // Mandamos al backend la nueva banda
+            const newBand = await createBand({ name: newBandName.trim(), country: 'Desconocido' }); // Agrega más campos si tu DB los pide
+
+            if (newBand && newBand.id) {
+                // Éxito: Volvemos a pedir las bandas al backend
+                const bands = await fetchBands();
+
+                // Redibujamos las opciones
+                selectBand.innerHTML = '<option value="">-- SELECCIONA UNA BANDA --</option>';
+                bands.forEach(b => {
+                    selectBand.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+                });
+
+                // Forzamos al select a quedarse con la banda que acabamos de crear
+                selectBand.value = newBand.id;
+
+                alert(`¡Banda "${newBandName.trim()}" forjada en el abismo exitosamente!`);
+            } else {
+                alert('Error al crear la banda. Verifica que seas administrador.');
+            }
+        }
+    });
+
     // AGREGAR CANCIÓN AL ÁLBUM ACTUAL
     const addSongForm = document.getElementById('add-song-form');
 
@@ -257,14 +302,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Limpiamos el formulario
             addSongForm.reset();
 
-            // Convertimos segundos a formato mm:ss para inyectarlo visualmente
+            // Convierte segundos a formato mm:ss para inyectarlo visualmente
             const min = Math.floor(duration_seconds / 60);
             const sec = (duration_seconds % 60).toString().padStart(2, '0');
 
-            // Inyectamos la nueva canción al final de la lista sin recargar todo
+            // Inyecta la nueva canción al final de la lista sin recargar todo
             const tracklistEl = document.getElementById('detail-tracklist');
 
-            // Si decía "NO HAY CANCIONES", lo limpiamos primero
+            // Si decía "NO HAY CANCIONES", lo limpia primero
             if (tracklistEl.innerHTML.includes('NO HAY CANCIONES')) {
                 tracklistEl.innerHTML = '';
             }
