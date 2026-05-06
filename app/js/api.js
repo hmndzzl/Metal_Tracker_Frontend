@@ -1,5 +1,19 @@
 const API_URL = 'http://localhost:3000/api';
 
+// VIGILANTE DE SESIONES (NUEVO)
+function interceptAuthErrors(response) {
+    // Si el backend nos lanza un 401 (Expirado) o 403 (No es Admin)
+    if (response.status === 401 || response.status === 403) {
+        console.warn('Brecha de seguridad detectada. Expulsando usuario...');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        alert('TU SESIÓN HA EXPIRADO O NO TIENES PERMISOS. EXPULSANDO DEL VAULT...');
+        window.location.reload(); // Forzamos el reinicio de la app
+        return true;
+    }
+    return false;
+}
+
 export async function fetchAlbums(query = '', sort = 'release_year', order = 'desc') {
     try {
         // Arma la URL con los parámetros del backend
@@ -44,7 +58,7 @@ export async function loginUser(username, password) {
     }
 }
 
-// CREAR ÁLBUM (Paso 1: Solo texto)
+// CREAR ÁLBUM
 export async function createAlbum(albumData) {
     try {
         const token = localStorage.getItem('token');
@@ -57,6 +71,8 @@ export async function createAlbum(albumData) {
             body: JSON.stringify(albumData)
         });
 
+        if (interceptAuthErrors(response)) return null;
+
         if (!response.ok) throw new Error('Fallo al crear el álbum');
         return await response.json();
     } catch (error) {
@@ -65,7 +81,7 @@ export async function createAlbum(albumData) {
     }
 }
 
-// SUBIR PORTADA (Paso 2: Imagen)
+// SUBIR PORTADA
 export async function uploadAlbumCover(albumId, file) {
     try {
         const token = localStorage.getItem('token');
@@ -80,6 +96,8 @@ export async function uploadAlbumCover(albumId, file) {
             },
             body: formData
         });
+
+        if (interceptAuthErrors(response)) return null;
 
         if (!response.ok) throw new Error('Fallo al subir la imagen');
         return await response.json();
@@ -113,6 +131,9 @@ export async function updateAlbum(id, albumData) {
             },
             body: JSON.stringify(albumData)
         });
+
+        if (interceptAuthErrors(response)) return false;
+
         return response.ok;
     } catch (error) {
         console.error('Error al actualizar:', error);
@@ -130,6 +151,9 @@ export async function deleteAlbum(id) {
                 'Authorization': `Bearer ${token}`
             }
         });
+
+        if (interceptAuthErrors(response)) return false;
+
         return response.ok;
     } catch (error) {
         console.error('Error al eliminar:', error);
@@ -162,6 +186,8 @@ export async function addSong(songData) {
             body: JSON.stringify(songData)
         });
 
+        if (interceptAuthErrors(response)) return null;
+
         if (!response.ok) throw new Error('Error al agregar canción');
         return await response.json();
     } catch (error) {
@@ -183,6 +209,8 @@ export async function createBand(bandData) {
             body: JSON.stringify(bandData)
         });
 
+        if (interceptAuthErrors(response)) return null;
+
         if (!response.ok) throw new Error('Error al forjar la banda');
         return await response.json();
     } catch (error) {
@@ -203,6 +231,8 @@ export async function addRating(albumId, ratingData) {
             },
             body: JSON.stringify(ratingData) // Envía el score y el texto
         });
+
+        if (interceptAuthErrors(response)) return null;
 
         if (!response.ok) throw new Error('Error al enviar la crítica');
         return await response.json();
