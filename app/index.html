@@ -32,8 +32,24 @@
 <body>
     <header class="brutalist-header">
         <h1>METAL TRACKER // VAULT</h1>
-        <button id="btn-add-album" class="brutalist-btn">AGREGAR ÁLBUM</button>
+
+        <!-- Agrupamos los botones aquí -->
+        <div class="header-actions">
+            <button id="btn-add-album" class="brutalist-btn">AGREGAR ÁLBUM</button>
+            <button id="btn-logout" class="brutalist-btn logout-btn">SALIR</button>
+        </div>
     </header>
+
+    <!-- BARRA DE BÚSQUEDA Y ORDENAMIENTO -->
+    <div class="controls-bar brutalist-card">
+        <input type="text" id="search-input" placeholder="BUSCAR POR TÍTULO O BANDA...">
+        <select id="sort-select">
+            <option value="release_year-desc">MÁS RECIENTES PRIMERO</option>
+            <option value="release_year-asc">MÁS ANTIGUOS PRIMERO</option>
+            <option value="title-asc">ALFABÉTICO (A-Z)</option>
+            <option value="title-desc">ALFABÉTICO (Z-A)</option>
+        </select>
+    </div>
 
     <main>
         <section id="albums-grid" class="albums-grid">

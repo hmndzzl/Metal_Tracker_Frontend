@@ -1,4 +1,7 @@
-import { fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover } from './api.js';
+import {
+    fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover,
+    fetchAlbumById, updateAlbum, deleteAlbum
+} from './api.js';
 import { renderAlbums } from './ui.js';
 
 
@@ -39,11 +42,94 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // CERRAR SESIÓN
+    const btnLogout = document.getElementById('btn-logout');
+    btnLogout.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.reload();
+    });
+
+    // Variable para rastrear si se está editando un álbum existente
+    let currentEditId = null;
+
+    // DELEGACIÓN DE EVENTOS (EDITAR Y ELIMINAR)
+    const grid = document.getElementById('albums-grid');
+
+    grid.addEventListener('click', async (e) => {
+        // --- LÓGICA DE ELIMINAR ---
+        if (e.target.classList.contains('delete')) {
+            const id = e.target.dataset.id;
+
+            // Vanilla JS estricto: usamos confirm() para validar
+            if (confirm('ALERTA: ¿Deseas destruir este álbum y sus canciones del Vault para siempre?')) {
+                const success = await deleteAlbum(id);
+                if (success) {
+                    const updatedAlbums = await fetchAlbums();
+                    renderAlbums(updatedAlbums);
+                } else {
+                    alert('Error satánico al intentar borrar.');
+                }
+            }
+        }
+
+        // --- LÓGICA DE EDITAR ---
+        if (e.target.classList.contains('edit')) {
+            const id = e.target.dataset.id;
+            const albumData = await fetchAlbumById(id);
+
+            if (albumData) {
+                // 1. Guardamos el ID que estamos editando
+                currentEditId = id;
+
+                // 2. Cargamos las bandas si no están cargadas
+                if (selectBand.options.length <= 1) {
+                    const bands = await fetchBands();
+                    selectBand.innerHTML = '<option value="">-- SELECCIONA UNA BANDA --</option>';
+                    bands.forEach(b => {
+                        selectBand.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+                    });
+                }
+
+                // 3. Llenamos el formulario con los datos actuales
+                document.getElementById('title').value = albumData.title;
+                document.getElementById('band_id').value = albumData.band_id;
+                document.getElementById('release_year').value = albumData.release_year;
+
+                // Cambiamos el título del modal
+                document.querySelector('.modal-title').textContent = 'EDITAR ÁLBUM';
+
+                // 4. Mostramos el modal
+                modal.classList.remove('hidden');
+            }
+        }
+    });
+
     // FUNCIÓN DE ARRANQUE PRINCIPAL
     async function iniciarApp() {
         try {
+            // Carga inicial (sin filtros)
             const albums = await fetchAlbums();
             renderAlbums(albums);
+
+            // Configura los controles de búsqueda
+            const searchInput = document.getElementById('search-input');
+            const sortSelect = document.getElementById('sort-select');
+
+            // Función interna para refrescar el grid
+            const refrescarGrid = async () => {
+                const query = searchInput.value;
+                const [sort, order] = sortSelect.value.split('-');
+
+                const filtrados = await fetchAlbums(query, sort, order);
+                renderAlbums(filtrados);
+            };
+
+            // Escuchar cuando el usuario escribe (evento 'input' en tiempo real)
+            searchInput.addEventListener('input', refrescarGrid);
+
+            // Escuchar cuando el usuario cambia el menú desplegable
+            sortSelect.addEventListener('change', refrescarGrid);
+
         } catch (error) {
             console.error('Fallo en el sistema:', error);
             document.getElementById('albums-grid').innerHTML = '<p class="loading-text">ERROR CRÍTICO.</p>';
@@ -66,16 +152,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const selectBand = document.getElementById('band_id');
     const form = document.getElementById('add-album-form');
 
-    // Abrir Modal y cargar las bandas
+    // Abrir Modal para NUEVO álbum
     btnAddAlbum.addEventListener('click', async () => {
+        currentEditId = null; // Reinicia el estado
+        form.reset(); // Limpia campos
+        document.querySelector('.modal-title').textContent = 'NUEVO ÁLBUM';
         modal.classList.remove('hidden');
 
-        // Solo carga las bandas si el select aún dice "CARGANDO..."
         if (selectBand.options.length <= 1) {
             const bands = await fetchBands();
             selectBand.innerHTML = '<option value="">-- SELECCIONA UNA BANDA --</option>';
-            bands.forEach(band => {
-                selectBand.innerHTML += `<option value="${band.id}">${band.name}</option>`;
+            bands.forEach(b => {
+                selectBand.innerHTML += `<option value="${b.id}">${b.name}</option>`;
             });
         }
     });
@@ -83,7 +171,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cerrar Modal
     btnCloseModal.addEventListener('click', () => {
         modal.classList.add('hidden');
-        form.reset(); // Limpiar el formulario al cerrar
+        form.reset();
+        currentEditId = null;
     });
 
     // Cerrar el modal si el usuario hace clic afuera de la caja negra
@@ -110,31 +199,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         submitBtn.disabled = true;
 
         try {
-            // PASO 1: Crea el registro en la BD
-            const newAlbum = await createAlbum({ title, band_id, release_year });
+            let albumIdToUpdateImage = null;
 
-            if (newAlbum && newAlbum.id) {
-                // PASO 2: Si hay una imagen seleccionada, la sube
-                if (coverInput.files.length > 0) {
-                    const imageFile = coverInput.files[0];
-                    await uploadAlbumCover(newAlbum.id, imageFile);
+            if (currentEditId) {
+                // RUTA DE EDICIÓN (PUT)
+                const success = await updateAlbum(currentEditId, { title, band_id, release_year });
+                if (success) {
+                    albumIdToUpdateImage = currentEditId;
+                } else {
+                    throw new Error('Fallo al actualizar el texto');
                 }
-
-                // ÉXITO: Cierra el modal, limpia y recarga el Grid
-                modal.classList.add('hidden');
-                form.reset();
-
-                // Pide los datos frescos y redibuja
-                const updatedAlbums = await fetchAlbums();
-                renderAlbums(updatedAlbums);
             } else {
-                alert('Hubo un error satánico al guardar el álbum.');
+                // RUTA DE CREACIÓN (POST)
+                const newAlbum = await createAlbum({ title, band_id, release_year });
+                if (newAlbum && newAlbum.id) {
+                    albumIdToUpdateImage = newAlbum.id;
+                } else {
+                    throw new Error('Fallo al crear el álbum');
+                }
             }
+
+            // Sube la imagen SOLO si el usuario seleccionó una nueva
+            if (albumIdToUpdateImage && coverInput.files.length > 0) {
+                const imageFile = coverInput.files[0];
+                await uploadAlbumCover(albumIdToUpdateImage, imageFile);
+            }
+
+            // ÉXITO: Cierra y recarga
+            modal.classList.add('hidden');
+            form.reset();
+            currentEditId = null;
+
+            const updatedAlbums = await fetchAlbums();
+            renderAlbums(updatedAlbums);
+
         } catch (error) {
             console.error('Error al guardar:', error);
-            alert('Error en el servidor.');
+            alert('Error en el servidor o permisos denegados.');
         } finally {
-            // Restaura el botón a la normalidad
             submitBtn.textContent = 'GUARDAR';
             submitBtn.disabled = false;
         }

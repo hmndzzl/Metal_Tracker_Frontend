@@ -1,13 +1,12 @@
 const API_URL = 'http://localhost:3000/api';
 
-export async function fetchAlbums() {
+export async function fetchAlbums(query = '', sort = 'release_year', order = 'desc') {
     try {
-        const response = await fetch(`${API_URL}/albums`);
+        // Arma la URL con los parámetros del backend
+        const url = `${API_URL}/albums?q=${encodeURIComponent(query)}&sort=${sort}&order=${order}`;
+        const response = await fetch(url);
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
         return await response.json();
     } catch (error) {
         console.error('Error al invocar los álbumes:', error);
@@ -87,5 +86,53 @@ export async function uploadAlbumCover(albumId, file) {
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+// OBTENER UN SOLO ÁLBUM
+export async function fetchAlbumById(id) {
+    try {
+        const response = await fetch(`${API_URL}/albums/${id}`);
+        if (!response.ok) throw new Error('No se encontró el álbum');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+// EDITAR ÁLBUM
+export async function updateAlbum(id, albumData) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/albums/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(albumData)
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('Error al actualizar:', error);
+        return false;
+    }
+}
+
+// ELIMINAR ÁLBUM
+export async function deleteAlbum(id) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/albums/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('Error al eliminar:', error);
+        return false;
     }
 }
