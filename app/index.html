@@ -93,6 +93,38 @@
             </form>
         </div>
     </div>
+
+    <!-- MODAL DE DETALLES (TRACKLIST Y RATINGS) -->
+    <div id="details-modal" class="modal hidden">
+        <div class="modal-content brutalist-card details-layout">
+            <button type="button" id="btn-close-details" class="btn-action close-corner">X</button>
+
+            <div class="details-header">
+                <img id="detail-cover" src="" alt="Cover" class="detail-cover-img">
+                <div class="detail-info">
+                    <h2 id="detail-title" class="modal-title">Cargando...</h2>
+                    <h3 id="detail-band" class="detail-subtitle"></h3>
+                    <p id="detail-year"></p>
+                </div>
+            </div>
+
+            <div class="details-body">
+                <div class="tracklist-section">
+                    <h3>TRACKLIST</h3>
+                    <ul id="detail-tracklist" class="brutalist-list">
+                        <!-- Se llenará con JS -->
+                    </ul>
+                </div>
+
+                <div class="ratings-section">
+                    <h3>RESEÑAS</h3>
+                    <ul id="detail-ratings" class="brutalist-list">
+                        <!-- Se llenará con JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

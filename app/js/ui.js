@@ -15,8 +15,8 @@ export function renderAlbums(albums) {
         card.className = 'brutalist-card';
 
         const coverHtml = album.cover_image_url
-            ? `<img src="${BACKEND_URL}${album.cover_image_url}" alt="${album.title}" class="card-cover">`
-            : `<div class="card-no-cover">SIN PORTADA</div>`;
+            ? `<img src="${BACKEND_URL}${album.cover_image_url}" alt="${album.title}" class="card-cover clickable-cover" data-id="${album.id}">`
+            : `<div class="card-no-cover clickable-cover" data-id="${album.id}">SIN PORTADA</div>`;
 
         card.innerHTML = `
             ${coverHtml}

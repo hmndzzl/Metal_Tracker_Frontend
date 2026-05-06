@@ -136,3 +136,15 @@ export async function deleteAlbum(id) {
         return false;
     }
 }
+
+// OBTENER RESEÑAS DE UN ÁLBUM
+export async function fetchAlbumRatings(id) {
+    try {
+        const response = await fetch(`${API_URL}/albums/${id}/ratings`);
+        if (!response.ok) throw new Error('No se encontraron reseñas');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}

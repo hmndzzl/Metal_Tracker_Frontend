@@ -1,6 +1,6 @@
 import {
     fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover,
-    fetchAlbumById, updateAlbum, deleteAlbum
+    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings
 } from './api.js';
 import { renderAlbums } from './ui.js';
 
@@ -56,6 +56,70 @@ document.addEventListener('DOMContentLoaded', async () => {
     const grid = document.getElementById('albums-grid');
 
     grid.addEventListener('click', async (e) => {
+
+        // --- LÓGICA DE VER DETALLES (CLICK EN PORTADA) ---
+        if (e.target.classList.contains('clickable-cover')) {
+            const id = e.target.dataset.id;
+            const detailsModal = document.getElementById('details-modal');
+
+            // Pone el modal visible pero en modo "Cargando"
+            document.getElementById('detail-title').textContent = 'INVOCANDO DATOS...';
+            document.getElementById('detail-tracklist').innerHTML = '';
+            document.getElementById('detail-ratings').innerHTML = '';
+            detailsModal.classList.remove('hidden');
+
+            try {
+                // Dispara ambas peticiones al mismo tiempo para mayor velocidad
+                const [albumData, ratingsData] = await Promise.all([
+                    fetchAlbumById(id),
+                    fetchAlbumRatings(id)
+                ]);
+
+                if (albumData) {
+                    // Llena cabecera
+                    document.getElementById('detail-title').textContent = albumData.title;
+                    document.getElementById('detail-band').textContent = albumData.band_name || 'Desconocido';
+                    document.getElementById('detail-year').textContent = `AÑO: ${albumData.release_year}`;
+
+                    const imgEl = document.getElementById('detail-cover');
+                    imgEl.src = albumData.cover_image_url
+                        ? `http://localhost:3000${albumData.cover_image_url}`
+                        : '';
+                    imgEl.style.display = albumData.cover_image_url ? 'block' : 'none';
+
+                    // Llena Tracklist
+                    const tracklistEl = document.getElementById('detail-tracklist');
+                    const songs = albumData.songs || [];
+                    if (songs.length === 0) {
+                        tracklistEl.innerHTML = '<li>NO HAY CANCIONES REGISTRADAS</li>';
+                    } else {
+                        songs.forEach(song => {
+                            // Convierte segundos a mm:ss
+                            const min = Math.floor(song.duration_seconds / 60);
+                            const sec = (song.duration_seconds % 60).toString().padStart(2, '0');
+                            tracklistEl.innerHTML += `<li>${song.track_number}. ${song.title} [${min}:${sec}]</li>`;
+                        });
+                    }
+
+                    // Llena Ratings
+                    const ratingsEl = document.getElementById('detail-ratings');
+                    if (ratingsData.length === 0) {
+                        ratingsEl.innerHTML = '<li>NADIE HA JUZGADO ESTE ÁLBUM AÚN</li>';
+                    } else {
+                        ratingsData.forEach(rating => {
+                            ratingsEl.innerHTML += `
+                                <li>
+                                    <span class="rating-score">${rating.score}/10</span> 
+                                    "${rating.review_text}"
+                                </li>`;
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error al cargar detalles", error);
+                document.getElementById('detail-title').textContent = 'ERROR AL CARGAR';
+            }
+        }
         // --- LÓGICA DE ELIMINAR ---
         if (e.target.classList.contains('delete')) {
             const id = e.target.dataset.id;
@@ -182,6 +246,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             form.reset();
         }
     });
+
+    // Cerrar Modal de Detalles
+    const btnCloseDetails = document.getElementById('btn-close-details');
+    const detailsModal = document.getElementById('details-modal');
+
+    btnCloseDetails.addEventListener('click', () => {
+        detailsModal.classList.add('hidden');
+    });
+
+    detailsModal.addEventListener('click', (e) => {
+        if (e.target === detailsModal) {
+            detailsModal.classList.add('hidden');
+        }
+    });
+
 
     // Enviar el formulario
     form.addEventListener('submit', async (e) => {

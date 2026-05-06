@@ -314,3 +314,76 @@ body {
     outline: none;
     border-color: #ff003c;
 }
+
+/* MODAL DE DETALLES DEL ÁLBUM */
+.details-layout {
+    max-width: 800px;
+    position: relative;
+}
+
+.close-corner {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    border: none;
+    color: #ff003c;
+    background: transparent;
+}
+
+.close-corner:hover {
+    color: #fff;
+    background: #ff003c;
+}
+
+.details-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #555;
+    padding-bottom: 2rem;
+}
+
+.detail-cover-img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border: 4px solid #fff;
+}
+
+.detail-subtitle {
+    color: #aaa;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.details-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+.brutalist-list {
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.brutalist-list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px dashed #555;
+    font-size: 0.9rem;
+}
+
+.rating-score {
+    color: #ff003c;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+/* Indicador de click en portadas */
+.clickable-cover {
+    cursor: pointer;
+}
