@@ -446,3 +446,21 @@ body {
     background-color: #fff;
     color: #000;
 }
+
+/* TEXTAREA DE RESEÑAS */
+.brutalist-textarea {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
+    resize: vertical;
+    /* Permite estirarlo solo hacia abajo */
+    margin-top: 0.5rem;
+}
+
+.brutalist-textarea:focus {
+    outline: none;
+    border-color: #ff003c;
+}

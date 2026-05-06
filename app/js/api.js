@@ -190,3 +190,24 @@ export async function createBand(bandData) {
         return null;
     }
 }
+
+// ENVIAR UNA NUEVA RESEÑA
+export async function addRating(albumId, ratingData) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/albums/${albumId}/ratings`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Identifica al usuario automáticamente
+            },
+            body: JSON.stringify(ratingData) // Envía el score y el texto
+        });
+
+        if (!response.ok) throw new Error('Error al enviar la crítica');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

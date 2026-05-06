@@ -131,6 +131,16 @@
 
                 <div class="ratings-section">
                     <h3>RESEÑAS</h3>
+
+                    <form id="add-rating-form" class="mini-form">
+                        <div class="mini-form-row">
+                            <input type="number" id="rating-score" placeholder="NOTA (1-10)" required min="1" max="10">
+                            <button type="submit" class="brutalist-btn-small">JUZGAR</button>
+                        </div>
+                        <textarea id="rating-text" placeholder="ESCRIBE TU CRÍTICA AQUÍ..." required rows="2"
+                            class="brutalist-textarea"></textarea>
+                    </form>
+
                     <ul id="detail-ratings" class="brutalist-list">
                         <!-- Se llenará con JS -->
                     </ul>

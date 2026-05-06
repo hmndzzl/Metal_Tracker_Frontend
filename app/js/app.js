@@ -1,6 +1,7 @@
 import {
     fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover,
-    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings, addSong, createBand
+    fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings, addSong,
+    createBand, addRating
 } from './api.js';
 import { renderAlbums } from './ui.js';
 
@@ -317,6 +318,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             tracklistEl.innerHTML += `<li>${track_number}. ${title} [${min}:${sec}]</li>`;
         } else {
             alert('Error satánico al guardar la pista.');
+        }
+    });
+
+    // AGREGAR RESEÑA AL ÁLBUM ACTUAL
+    const addRatingForm = document.getElementById('add-rating-form');
+
+    addRatingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentViewAlbumId) return;
+
+        const score = parseInt(document.getElementById('rating-score').value);
+        const review_text = document.getElementById('rating-text').value;
+
+        // Mandamos la data al backend
+        const newRating = await addRating(currentViewAlbumId, {
+            score,
+            review_text
+        });
+
+        if (newRating) {
+            // Limpiamos el formulario
+            addRatingForm.reset();
+
+            // Inyectamos la nueva reseña visualmente en la lista
+            const ratingsEl = document.getElementById('detail-ratings');
+
+            // Si decía "NADIE HA JUZGADO", lo limpiamos primero
+            if (ratingsEl.innerHTML.includes('NADIE HA JUZGADO')) {
+                ratingsEl.innerHTML = '';
+            }
+
+            // Usamos un pequeño truco de CSS para que la nueva reseña resalte un momento
+            ratingsEl.innerHTML = `
+                <li style="border-left: 2px solid #ff003c; padding-left: 0.5rem;">
+                    <span class="rating-score">${score}/10</span> 
+                    "${review_text}"
+                </li>` + ratingsEl.innerHTML; // Lo ponemos arriba de las demás
+
+        } else {
+            alert('El servidor rechazó tu crítica. Intenta de nuevo.');
         }
     });
 
