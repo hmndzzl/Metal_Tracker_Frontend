@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'http://https://34.171.199.135:3000';
 
 export function renderAlbums(albums) {
     const grid = document.getElementById('albums-grid');

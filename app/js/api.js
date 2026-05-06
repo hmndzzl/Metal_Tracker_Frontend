@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://https://34.171.199.135:3000/api';
 
 // VIGILANTE DE SESIONES (NUEVO)
 function interceptAuthErrors(response) {
