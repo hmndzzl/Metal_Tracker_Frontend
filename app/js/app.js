@@ -1,7 +1,7 @@
 import {
     fetchAlbums, fetchBands, loginUser, createAlbum, uploadAlbumCover,
     fetchAlbumById, updateAlbum, deleteAlbum, fetchAlbumRatings, addSong,
-    createBand, addRating
+    createBand, addRating, BACKEND_URL
 } from './api.js';
 import { renderAlbums } from './ui.js';
 
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const imgEl = document.getElementById('detail-cover');
                     imgEl.src = albumData.cover_image_url
-                        ? `http://localhost:3000${albumData.cover_image_url}`
+                        ? `${BACKEND_URL}${albumData.cover_image_url}`
                         : '';
                     imgEl.style.display = albumData.cover_image_url ? 'block' : 'none';
 
