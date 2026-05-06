@@ -7,7 +7,7 @@ const isLocal = currentHost === 'localhost' || currentHost === '127.0.0.1';
 // 3. Definimos el dominio del backend dinámicamente
 export const BACKEND_URL = isLocal
     ? 'http://localhost:3000'
-    : 'http://34.171.199.135';
+    : 'http://34.171.199.135:3000';
 
 // 4. Construimos la ruta de la API
 export const API_URL = `${BACKEND_URL}/api`;
